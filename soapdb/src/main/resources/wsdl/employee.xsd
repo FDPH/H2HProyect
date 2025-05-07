@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://parameta.com/soapdb/employee" xmlns:tns="http://parameta.com/soapdb/employee"
+           elementFormDefault="qualified">
+
+    <!-- ENUMS -->
+    <xs:simpleType name="DocumentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RC"/>
+            <xs:enumeration value="TI"/>
+            <xs:enumeration value="CC"/>
+            <xs:enumeration value="TE"/>
+            <xs:enumeration value="CE"/>
+            <xs:enumeration value="NIT"/>
+            <xs:enumeration value="PP"/>
+            <xs:enumeration value="PEP"/>
+            <xs:enumeration value="DIE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- TYPE COMPLEX -->
+    <xs:complexType name="Duration">
+        <xs:sequence>
+            <xs:element name="years" type="xs:int"/>
+            <xs:element name="months" type="xs:int"/>
+            <xs:element name="days" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ===== VALIDACIONES ADICIONALES ===== -->
+    <!-- Tipo para strings no vacíos y con máximo de caracteres -->
+    <xs:simpleType name="NonEmptyString150">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="150"/>
+            <xs:pattern value=".*\S.*"/> <!-- Evita solo espacios -->
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NonEmptyString50">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+            <xs:pattern value=".*\S.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NonEmptyString15">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="15"/>
+            <xs:pattern value=".*\S.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SalaryType">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:totalDigits value="14"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Solicitud para guardar un empleado -->
+    <xs:element name="SaveEmployeeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="tns:NonEmptyString150"/>
+                <xs:element name="lastName" type="tns:NonEmptyString150"/>
+                <xs:element name="documentType" type="tns:DocumentType"/>
+                <xs:element name="idNumber" type="tns:NonEmptyString15"/>
+                <xs:element name="dateOfBirth" type="xs:date"/>
+                <xs:element name="dateOfJoiningCompany" type="xs:date"/>
+                <xs:element name="position" type="tns:NonEmptyString50"/>
+                <xs:element name="salary" type="tns:SalaryType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Salary must be a valid monetary value with up to 14 digits and 2 decimals.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Respuesta para guardar un empleado -->
+    <xs:element name="SaveEmployeeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="employeeIdNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="EmployeeFault">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="errorCode" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="field" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

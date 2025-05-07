@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://parameta.com/soapdb/employee" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://parameta.com/soapdb/employee" targetNamespace="http://parameta.com/soapdb/employee">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://parameta.com/soapdb/employee">
+
+    <!-- ENUMS -->
+    <xs:simpleType name="DocumentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RC"/>
+            <xs:enumeration value="TI"/>
+            <xs:enumeration value="CC"/>
+            <xs:enumeration value="TE"/>
+            <xs:enumeration value="CE"/>
+            <xs:enumeration value="NIT"/>
+            <xs:enumeration value="PP"/>
+            <xs:enumeration value="PEP"/>
+            <xs:enumeration value="DIE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- TYPE COMPLEX -->
+    <xs:complexType name="Duration">
+        <xs:sequence>
+            <xs:element name="years" type="xs:int"/>
+            <xs:element name="months" type="xs:int"/>
+            <xs:element name="days" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ===== VALIDACIONES ADICIONALES ===== -->
+    <!-- Tipo para strings no vacíos y con máximo de caracteres -->
+    <xs:simpleType name="NonEmptyString150">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="150"/>
+            <xs:pattern value=".*\S.*"/> <!-- Evita solo espacios -->
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NonEmptyString50">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+            <xs:pattern value=".*\S.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NonEmptyString15">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="15"/>
+            <xs:pattern value=".*\S.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SalaryType">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:totalDigits value="14"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Solicitud para guardar un empleado -->
+    <xs:element name="SaveEmployeeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="tns:NonEmptyString150"/>
+                <xs:element name="lastName" type="tns:NonEmptyString150"/>
+                <xs:element name="documentType" type="tns:DocumentType"/>
+                <xs:element name="idNumber" type="tns:NonEmptyString15"/>
+                <xs:element name="dateOfBirth" type="xs:date"/>
+                <xs:element name="dateOfJoiningCompany" type="xs:date"/>
+                <xs:element name="position" type="tns:NonEmptyString50"/>
+                <xs:element name="salary" type="tns:SalaryType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Salary must be a valid monetary value with up to 14 digits and 2 decimals.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Respuesta para guardar un empleado -->
+    <xs:element name="SaveEmployeeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="employeeIdNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="EmployeeFault">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="errorCode" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="field" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="EmployeeFault">
+    <wsdl:part element="tns:EmployeeFault" name="EmployeeFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SaveEmployeeResponse">
+    <wsdl:part element="tns:SaveEmployeeResponse" name="SaveEmployeeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SaveEmployeeRequest">
+    <wsdl:part element="tns:SaveEmployeeRequest" name="SaveEmployeeRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EmployeesPort">
+    <wsdl:operation name="SaveEmployee">
+      <wsdl:input message="tns:SaveEmployeeRequest" name="SaveEmployeeRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:SaveEmployeeResponse" name="SaveEmployeeResponse">
+    </wsdl:output>
+        <wsdl:fault message="tns:EmployeeFault" name="EmployeeFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EmployeesPortSoap11" type="tns:EmployeesPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SaveEmployee">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="SaveEmployeeRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SaveEmployeeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+        <wsdl:fault name="EmployeeFault">
+            <soap:fault name="EmployeeFault" use="literal"/>
+        </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EmployeesPortService">
+    <wsdl:port binding="tns:EmployeesPortSoap11" name="EmployeesPortSoap11">
+      <soap:address location="http://localhost:8081/ws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

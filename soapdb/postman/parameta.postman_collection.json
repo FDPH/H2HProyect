@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "7c371977-c205-45e6-9723-68d91ff1c42d",
+		"name": "parameta",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31881429"
+	},
+	"item": [
+		{
+			"name": "PostRest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Manuel\",\r\n  \"lastName\": \"Hernandez\",\r\n  \"documentType\": \"PP\",\r\n  \"idNumber\": \"amx10220\",\r\n  \"dateOfBirth\": \"2004-09-27\",\r\n  \"dateOfJoiningCompany\": \"1990-05-05\",\r\n  \"position\": \"Dev\",\r\n  \"salary\": 500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/employee",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"employee"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
