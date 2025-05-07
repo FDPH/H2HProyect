@@ -1,0 +1,11 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: gateway-app:latest
+        container_name: java-gateway-app-container
+        ports: 
+            - "8080:8080"
+        environment:
+            - SOAP_CLIENT_DEFAULT_URI=http://soap-app:8081/ws

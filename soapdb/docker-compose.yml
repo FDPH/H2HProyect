@@ -1,0 +1,34 @@
+services:
+    db:
+        image: mysql:8
+        container_name: soapdb-container
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./mysql_data/employeedb.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - red_soapdb
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: soapdb-app:latest
+        container_name: java-soapdb-app-container
+        ports:
+            - "8081:8081"
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/Employee
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: root
+        depends_on:
+            - db
+        networks:
+            - red_soapdb
+
+volumes:
+    db-data:
+networks:
+    red_soapdb:

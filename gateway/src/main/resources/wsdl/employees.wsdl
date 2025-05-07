@@ -117,6 +117,8 @@
     <wsdl:part element="tns:SaveEmployeeRequest" name="SaveEmployeeRequest">
     </wsdl:part>
   </wsdl:message>
+
+    <!-- PortType (agrupa operaciones) -->
   <wsdl:portType name="EmployeesPort">
     <wsdl:operation name="SaveEmployee">
       <wsdl:input message="tns:SaveEmployeeRequest" name="SaveEmployeeRequest">
@@ -126,6 +128,8 @@
         <wsdl:fault message="tns:EmployeeFault" name="EmployeeFault"/>
     </wsdl:operation>
   </wsdl:portType>
+
+    <!-- Binding (SOAP) -->
   <wsdl:binding name="EmployeesPortSoap11" type="tns:EmployeesPort">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="SaveEmployee">
@@ -141,6 +145,8 @@
         </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>
+
+    <!-- Service -->
   <wsdl:service name="EmployeesPortService">
     <wsdl:port binding="tns:EmployeesPortSoap11" name="EmployeesPortSoap11">
       <soap:address location="http://localhost:8081/ws"/>
